@@ -23,20 +23,21 @@ class HumanPlayer
       if error
         puts "\n#{error}".center(62).colorize(:red)
       end
-
-      puts "\nCurrent Player: #{@color.capitalize}".colorize(board.cursor_color)
-      puts "I | J | K | L to navigate, ENTER selects start position".colorize(board.cursor_color)
+      puts ""
+      puts "Current Player: #{@color.capitalize}".center(62).colorize(board.cursor_color)
+      puts "w,a,s,d to navigate, ENTER selects start position".center(62).colorize(board.cursor_color)
+      puts "q to Exit".center(62).colorize(:yellow)
       input = $stdin.getch
       case input
         when "q"
           exit
-        when "i"
+        when "w"
           board.selected = [(board.selected[0] - 1) % 8, board.selected[1]]
-        when "j"
+        when "a"
           board.selected = [board.selected[0], (board.selected[1] - 1) % 8]
-        when "k"
+        when "s"
           board.selected = [(board.selected[0] + 1) % 8, board.selected[1]]
-        when "l"
+        when "d"
           board.selected = [board.selected[0], (board.selected[1] + 1) % 8]
         when "\r"
           piece = board[[board.selected[0], board.selected[1]]]
@@ -58,19 +59,21 @@ class HumanPlayer
       if error
         puts "\n" + error + "\n".center(62).colorize(:red)
       end
-      puts "\nCurrent Player: #{@color}".colorize(board.cursor_color)
-      puts "I | J | K | L to navigate, ENTER selects end position.".colorize(board.cursor_color)
+      puts ""
+      puts "Current Player: #{@color.capitalize}".center(62).colorize(board.cursor_color)
+      puts "w,a,s,d to navigate, ENTER selects end position".center(62).colorize(board.cursor_color)
+      puts "q to Exit".center(62).colorize(:yellow)
       input = $stdin.getch
       case input
         when "q"
           exit
-        when "i"
+        when "w"
           board.selected = [(board.selected[0] - 1) % 8, board.selected[1]]
-        when "j"
+        when "a"
           board.selected = [board.selected[0], (board.selected[1] - 1) % 8]
-        when "k"
+        when "s"
           board.selected = [(board.selected[0] + 1) % 8, board.selected[1]]
-        when "l"
+        when "d"
           board.selected = [board.selected[0], (board.selected[1] + 1) % 8]
         when "\r"
           input_end = board.selected

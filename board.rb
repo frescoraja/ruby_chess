@@ -142,7 +142,7 @@ class Board
 
   def render
     system 'clear'
-    puts "\n\nChess! Press 'q' to quit\n".center(62).colorize(:yellow)
+    puts "\n\n"
     moves_pos = []
     if self[@selected]
       moves_pos = selected_piece_moves
