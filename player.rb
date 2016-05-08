@@ -13,7 +13,7 @@ class HumanPlayer
       board.selected = [1, 4]
     end
 
-    board.render
+    board.render(@color)
 
     begin
     input_start = nil
@@ -50,7 +50,7 @@ class HumanPlayer
             board.current_piece, selected_piece = piece, piece
           end
         end
-        board.render
+        board.render(@color)
       end
 
     error = nil
@@ -78,11 +78,11 @@ class HumanPlayer
         when "\r"
           input_end = board.selected
         end
-        board.render
+        board.render(@color)
       end
       board.move(input_start, input_end)
       board.current_piece = nil
-      board.render
+      board.render(@color)
     rescue ArgumentError => e
       puts "#{e.message} Please try again."
       retry
