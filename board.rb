@@ -140,11 +140,11 @@ class Board
     self[@selected].valid_moves
   end
 
-  def render
+  def render(active_color)
     system 'clear'
     puts "\n\n"
     moves_pos = []
-    if self[@selected]
+    if self[@selected] && self[@selected].color == active_color
       moves_pos = selected_piece_moves
     end
 
