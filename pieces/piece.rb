@@ -1,13 +1,14 @@
+# Piece Base Class
 class Piece
   DIAGONAL_DIRS = [
     [-1, -1], [-1, 1], [1, -1], [1, 1]
-  ]
+  ].freeze
   HORIZONTAL_DIRS = [
     [0, -1], [0, 1]
-  ]
+  ].freeze
   VERTICAL_DIRS = [
     [-1, 0], [1, 0]
-  ]
+  ].freeze
   attr_accessor :board, :pos, :color
 
   def initialize(board, pos, color)
@@ -16,7 +17,7 @@ class Piece
   end
 
   def inspect
-    "{ #{self.class} #{self.pos} #{self.color} }"
+    "{ #{self.class} #{@pos} #{@color} }"
   end
 
   def render
@@ -25,13 +26,13 @@ class Piece
 
   def move_into_check?(pos)
     duplicate_board = @board.dup
-    duplicate_board.move!(self.pos, pos)
+    duplicate_board.move!(@pos, pos)
     duplicate_board.in_check?(@color)
   end
 
   def valid_moves
-    self.moves.reject do |move|
-      self.move_into_check?(move)
+    moves.reject do |move|
+      move_into_check?(move)
     end
   end
 
@@ -40,6 +41,6 @@ class Piece
   end
 
   def same_color?(other_piece)
-    self.color == other_piece.color
+    @color == other_piece.color
   end
 end

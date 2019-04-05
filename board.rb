@@ -33,7 +33,7 @@ class Board
 
   def []=(pos, piece)
     x, y = pos
-    @rows[x][y]= piece
+    @rows[x][y] = piece
   end
 
   def add_piece(pos, piece)
@@ -153,8 +153,8 @@ class Board
   end
 
   def _render_caption(color)
-    in_check_msg = in_check?(color) ? " - (in Check)".center(62).colorize(:red) : ""
-    puts "\nCurrent Player: #{color.capitalize}#{in_check_msg}".center(62).colorize(cursor_color)
+    in_check_msg = in_check?(color) ? '(in Check)'.colorize(:red) : ''
+    puts "\nCurrent Player: #{color.capitalize}".colorize(:blue) + in_check_msg.colorize(:red).center(62)
     puts 'w,a,s,d to navigate, ENTER to select'.center(62).colorize(cursor_color)
     puts 'q to Exit'.center(62).colorize(:yellow)
   end
@@ -172,9 +172,9 @@ class Board
     counter = 0
     idx = 8
     @rows.each_with_index do |row, row_idx|
-      top_row_str = "  "
+      top_row_str = '  '
       row_str = "#{idx} "
-      bottom_row_str = "  "
+      bottom_row_str = '  '
       idx -= 1
       row.each_with_index do |piece, col_idx|
         counter += 1
@@ -183,7 +183,7 @@ class Board
         if @selected == [row_idx, col_idx]
           background = @cursor_color
         elsif @current_piece && @current_piece.pos == [row_idx, col_idx]
-            background = :magenta
+          background = :magenta
         end
 
         if moves_pos.include?([row_idx, col_idx])
@@ -196,22 +196,21 @@ class Board
             else
               background = :light_yellow
             end
+          elsif @selected == [row_idx, col_idx]
+            background = :light_magenta
           else
-            if @selected == [row_idx, col_idx]
-              background = :light_magenta
-            else
-              background = :light_yellow
-            end
+            background = :light_yellow
           end
         end
 
-        top_row_str += "".center(7).colorize(background: background)
-        bottom_row_str += "".center(7).colorize(background: background)
+        top_row_str += ''.center(7).colorize(background: background)
+        bottom_row_str += ''.center(7).colorize(background: background)
         if piece
-          row_str += "#{piece.render}".center(7).colorize(
-            color: "light_#{piece.color}", background: background)
+          row_str += piece.render.center(7).colorize(
+            color: "light_#{piece.color}", background: background
+          )
         else
-          row_str += "".center(7).colorize(background: background)
+          row_str += ''.center(7).colorize(background: background) unless piece
         end
       end
       puts top_row_str
