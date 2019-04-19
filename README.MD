@@ -14,12 +14,16 @@ git clone https://github.com/frescoraja/ruby_chess && cd ruby_chess
 bundle install
 
 ruby game.rb
+
+# To enable move highlighting, append hl flag:
+
+ruby game.rb --hl
 ```
 
 ## Features
 
 - Valid-move highlighting: move your cursor to a piece to see all valid moves
-    for that piece
+    for that piece (`ruby game.rb --hl` to enable move highlighting)
 - [Pawn en-passant attack](https://en.wikipedia.org/wiki/En_passant)
 - [Pawn conversion](http://www.4chessrules.com/converting-pawns-into-higher-pieces.html)
 

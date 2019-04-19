@@ -20,11 +20,12 @@ class Board
   attr_reader :rows
   attr_accessor :selected, :cursor_color, :current_piece
 
-  def initialize(fill_board = true)
+  def initialize(fill_board = true, highlighting = false)
     make_blank_board(fill_board)
     @selected = [7, 0]
     @current_piece = nil
     @cursor_color = :light_blue
+    @highlight_moves = highlighting
   end
 
   def [](pos)
@@ -217,43 +218,38 @@ class Board
       idx -= 1
       row.each_with_index do |piece, col_idx|
         counter += 1
-        background = counter.odd? ? :black : :white
+        bg = counter.odd? ? :black : :white
 
         if @selected == [row_idx, col_idx]
-          background = @cursor_color
+          bg = @cursor_color
         elsif @current_piece && @current_piece.pos == [row_idx, col_idx]
-          background = :magenta
+          bg = :magenta
         end
 
-        if moves_pos.include?([row_idx, col_idx])
+        if @highlight_moves && moves_pos.include?([row_idx, col_idx])
+          bg = :light_yellow
+
           if piece
-            if @selected == [row_idx, col_idx] && @current_piece && piece.color != @current_piece.color
-              background = :red
-            elsif (@current_piece && @current_piece.color != piece.color) ||
-                  (!empty?(@selected) && self[@selected].color != piece.color)
-              background = :light_red
-            else
-              background = :light_yellow
-            end
+            bg = :red if (@selected == [row_idx, col_idx] && @current_piece && piece.color != @current_piece.color) ||
+                         ((@current_piece && @current_piece.color != piece.color) ||
+                         (!empty?(@selected) && self[@selected].color != piece.color))
           elsif @current_piece.is_a?(Pawn) && @current_piece.en_passants.include?([row_idx, col_idx])
-            background = :red
+            bg = :red
           elsif self[@selected].is_a?(Pawn) && self[@selected].en_passants.include?([row_idx, col_idx])
-            background = :red
+            bg = :red
           elsif @selected == [row_idx, col_idx]
-            background = :light_magenta
-          else
-            background = :light_yellow
+            bg = :light_magenta
           end
         end
 
-        top_row_str += ''.center(7).colorize(background: background)
-        bottom_row_str += ''.center(7).colorize(background: background)
+        top_row_str += ''.center(7).colorize(background: bg)
+        bottom_row_str += ''.center(7).colorize(background: bg)
         if piece
           row_str += piece.render.center(7).colorize(
-            color: "light_#{piece.color}", background: background
+            color: "light_#{piece.color}", background: bg
           )
         else
-          row_str += ''.center(7).colorize(background: background) unless piece
+          row_str += ''.center(7).colorize(background: bg) unless piece
         end
       end
       puts top_row_str
@@ -261,7 +257,7 @@ class Board
       puts bottom_row_str
       counter += 1
     end
-    puts '     A      B      C      D      E      F      G      H'
+    puts '     ' + ('A'..'H').to_a.join('      ')
 
     _render_caption(active_color)
     nil

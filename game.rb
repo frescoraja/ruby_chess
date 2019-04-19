@@ -8,15 +8,14 @@ require 'io/console'
 class Game
   attr_reader :board
 
-  def initialize
-    @board = Board.new(false)
+  def initialize(highlighting: false)
+    @board = Board.new(false, highlighting)
     @player1 = HumanPlayer.new(:white)
     @player2 = HumanPlayer.new(:black)
     @players = [@player1, @player2]
   end
 
   def play
-    puts "Let's Play CHESS!!"
     loop do
       @players.first.play_turn(@board)
 
@@ -32,6 +31,7 @@ class Game
 end
 
 if $PROGRAM_NAME == __FILE__
-  game = Game.new
+  enable_hl = ARGV.include?('--hl')
+  game = Game.new(highlighting: enable_hl)
   game.play
 end
