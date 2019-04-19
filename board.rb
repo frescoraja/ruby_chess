@@ -19,6 +19,7 @@ end
 class Board
   attr_reader :rows
   attr_accessor :selected, :cursor_color, :current_piece
+
   def initialize(fill_board = true)
     make_blank_board(fill_board)
     @selected = [7, 0]
@@ -87,6 +88,10 @@ class Board
     pawn.en_passant = (start[0] - end_pos[0]).abs == 2
   end
 
+  def graduate_pawn(pawn)
+    _render_graduation_options(pawn) if pawn.at_end_row?
+  end
+
   def fill_back_rows(symbol)
     back_pieces = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
     row = symbol == :white ? 7 : 0
@@ -112,23 +117,33 @@ class Board
     end
   end
 
-  def move!(start, end_pos)
-    start_piece = self[start]
-    en_passantify(start_piece, start, end_pos) if start_piece.is_a?(Pawn)
-    self[end_pos] = start_piece
-    self[end_pos].pos = end_pos
+  def move!(start, end_pos, checking = false)
+    piece = self[start]
+    en_passantify(piece, start, end_pos) if piece.is_a?(Pawn)
+    perform_passant!(start, end_pos, piece) if piece.is_a?(Pawn) &&
+                                               piece.en_passants.include?(end_pos)
+    self[end_pos] = piece
+    piece.pos = end_pos
     self[start] = nil
     @current_piece = nil
+    graduate_pawn(piece) if !checking && piece.is_a?(Pawn)
   end
 
-  def move(start, end_pos)
+  def perform_passant!(start, end_pos, piece)
+    other_piece = self[[start[0], end_pos[1]]]
+    return if other_piece.nil? || other_piece.color == piece.color
+
+    self[other_piece.pos] = nil if other_piece.is_a?(Pawn) && other_piece.en_passant
+  end
+
+  def move(start, end_pos, checking = false)
     start_piece = self[start]
 
     raise InvalidEndMove, 'Not a valid selection.' if start_piece.nil?
     raise InvalidEndMove, 'Not a valid move.' unless start_piece.moves.include?(end_pos)
     raise InvalidEndMove, 'Cannot move into check.' unless start_piece.valid_moves.include?(end_pos)
 
-    move!(start, end_pos)
+    move!(start, end_pos, checking)
   end
 
   def valid_position?(pos)
@@ -150,6 +165,30 @@ class Board
 
   def unchoose_piece
     @current_piece = nil
+  end
+
+  def _render_graduation_options(pawn)
+    puts "\nPawn Graduation Available for Player #{pawn.color.to_s.capitalize}!\n"
+      .colorize(:green).center(62)
+    puts "Please choose a new piece class:\n"
+      .colorize(:light_green).center(62)
+    puts "(k-> Knight, r-> Rook, b-> Bishop, q-> Queen)\n"
+      .colorize(:light_green).center(62)
+
+    input = $stdin.getch
+    new_piece = case input
+                when /k|K/
+                  Knight
+                when /r|R/
+                  Rook
+                when /b|B/
+                  Bishop
+                else
+                  Queen
+                end
+
+    new_piece = new_piece.new(self, pawn.pos, pawn.color)
+    self[new_piece.pos] = new_piece
   end
 
   def _render_caption(color)
@@ -196,6 +235,10 @@ class Board
             else
               background = :light_yellow
             end
+          elsif @current_piece.is_a?(Pawn) && @current_piece.en_passants.include?([row_idx, col_idx])
+            background = :red
+          elsif self[@selected].is_a?(Pawn) && self[@selected].en_passants.include?([row_idx, col_idx])
+            background = :red
           elsif @selected == [row_idx, col_idx]
             background = :light_magenta
           else

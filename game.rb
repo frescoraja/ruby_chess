@@ -21,7 +21,7 @@ class Game
       @players.first.play_turn(@board)
 
       if @board.checkmate?(@players.last.color)
-        puts "#{@players.last.color.to_s.capitalize} is in checkmate! #{@player2.color.to_s.capitalize}, you win!"
+        puts "#{@players.last.color.to_s.capitalize} is in checkmate! #{@players.first.color.to_s.capitalize}, you win!"
           .center(62).colorize(:orange)
         exit
       end
